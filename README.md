@@ -19,6 +19,16 @@ bun run build
 
 ⚠️ **重要**：此项目使用 **PM2** 管理运行。
 
+### 快速部署（推荐）
+
+```bash
+./deploy.sh
+```
+
+一键执行构建 + PM2 重启。
+
+### 手动部署
+
 ```bash
 # 启动服务
 pm2 start npm --name ineffa -- start
