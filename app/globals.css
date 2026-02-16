@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@theme {
+  /* 复古家电手册配色 */
+  --color-cream: #f5f1e8;
+  --color-cream-dark: #e8e0d0;
+  --color-warm-brown: #8b6914;
+  --color-rust: #c75b39;
+  --color-teal: #2d5a5a;
+  --color-ink: #1a1a1a;
+  --color-paper: #faf8f3;
+}
+
+/* 复古纸张纹理 */
+.paper-texture {
+  background-color: #faf8f3;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-blend-mode: multiply;
+}
+
+/* 复古边框样式 */
+.vintage-border {
+  border: 3px double #8b6914;
+  position: relative;
+}
+
+.vintage-border::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid #8b6914;
+  pointer-events: none;
+}
+
+/* 打字机效果 */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typewriter 2s steps(20) forwards;
+}
+
+/* 轻微浮动动画 */
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+.gentle-float {
+  animation: gentle-float 6s ease-in-out infinite;
+}
+
+/* 扫描线效果 */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scanline::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(45, 90, 90, 0.1);
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* 标签样式 */
+.vintage-label {
+  background: #c75b39;
+  color: white;
+  padding: 2px 12px;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+  display: inline-block;
+}
+
+/* 装饰性引号 */
+.decorative-quote {
+  font-family: Georgia, serif;
+  font-size: 4rem;
+  line-height: 1;
+  color: #8b6914;
+  opacity: 0.3;
+}
