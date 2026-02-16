@@ -11,12 +11,9 @@
   --color-paper: #faf8f3;
 }
 
-/* 复古纸张纹理 */
+/* 复古渐变背景 */
 .paper-texture {
-  background-color: #faf8f3;
-  background-image: 
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  background-blend-mode: multiply;
+  background: linear-gradient(180deg, #faf8f3 0%, #f5f1e8 50%, #f0ece0 100%);
 }
 
 /* 复古边框样式 */
