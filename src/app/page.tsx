@@ -1,9 +1,17 @@
+'use client';
+
+import Link from 'next/link';
 import CalculatorSharp from '@ricons/ionicons5/es/CalculatorSharp';
 import SnowSharp from '@ricons/ionicons5/es/SnowSharp';
 import HappySharp from '@ricons/ionicons5/es/HappySharp';
 import FlashSharp from '@ricons/ionicons5/es/FlashSharp';
+import { useGatewayStatus } from '@/hooks/useGatewayStatus';
 
 export default function Home() {
+  const { state, isLoading } = useGatewayStatus();
+  
+  const isOnline = state.gateway?.running ?? false;
+
   return (
     <main className="min-h-screen paper-texture text-ink scanline overflow-x-hidden">
       <div className="h-2 bg-gradient-to-r from-rust via-warm-brown to-teal" />
@@ -39,14 +47,17 @@ export default function Home() {
               一台由数据产生的<span className="line-through text-warm-brown/50">谬误</span>赛博家政机器人。
             </p>
 
-            <div className="flex gap-4 pt-4">
-              <div className="vintage-border p-4 bg-cream/50">
+            <div className="flex gap-4 pt-4 flex-wrap">
+              {/* Status 卡片 - 可点击跳转到 Dashboard */}
+              <Link href="/dashboard" className="vintage-border p-4 bg-cream/50 hover:bg-cream transition-colors cursor-pointer block">
                 <p className="text-xs text-warm-brown uppercase tracking-wider mb-1">Status</p>
-                <p className="text-teal font-mono text-sm flex items-center gap-2">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  系统在线
+                <p className={`font-mono text-sm flex items-center gap-2 ${isOnline ? 'text-teal' : 'text-rust'}`}>
+                  <span className={`w-2 h-2 rounded-full ${isLoading ? 'bg-yellow-500 animate-pulse' : isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                  {isLoading ? '检测中...' : (isOnline ? '系统在线' : '系统离线')}
                 </p>
-              </div>
+              </Link>
+              
+              {/* 清扫待机中卡片 - 纯展示 */}
               <div className="vintage-border p-4 bg-cream/50">
                 <p className="text-xs text-warm-brown uppercase tracking-wider mb-1">Protocol</p>
                 <p className="text-rust font-mono text-sm">清扫待机中</p>
