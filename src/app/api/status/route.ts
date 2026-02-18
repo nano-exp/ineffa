@@ -2,7 +2,6 @@ import { execSync } from 'child_process';
 
 export async function GET() {
   try {
-    // 获取状态
     const output = execSync('openclaw status --json', { 
       encoding: 'utf-8', 
       timeout: 10000 
@@ -28,20 +27,49 @@ export async function GET() {
       return Response.json({ error: '无法解析状态' }, { status: 500 });
     }
 
-    // 简化输出
+    // 返回前端需要的数据结构
     return Response.json({
-      running: true,
-      sessions: status.sessions?.count || 0,
-      model: status.agents?.defaultId || 'unknown',
-      uptime: status.os?.uptime ? `${Math.floor(status.os.uptime / 60)}m` : 'unknown',
-      platform: `${status.os?.platform} ${status.os?.arch}`,
-      version: status.gateway?.version || 'unknown',
-      timestamp: new Date().toISOString(),
+      gateway: {
+        running: status.gateway?.running ?? true,
+        mode: status.gateway?.bindMode || 'loopback',
+        url: status.gateway?.probeUrl || 'ws://127.0.0.1:18789',
+        reachable: status.rpc?.ok || false,
+        service: {
+          installed: status.service?.loaded || false,
+          runtime: status.service?.runtime?.status === 'running' 
+            ? `running (pid: ${status.service.runtime.pid})`
+            : 'stopped',
+        },
+      },
+      sessions: {
+        total: status.sessions?.count || 0,
+        recent: (status.sessions?.recent || []).slice(0, 5).map((s: any) => ({
+          agentId: s.agentId,
+          model: s.model,
+          inputTokens: s.inputTokens || 0,
+          outputTokens: s.outputTokens || 0,
+          totalTokens: s.totalTokens || 0,
+          percentUsed: s.percentUsed || 0,
+        })),
+      },
+      agents: {
+        total: status.agents?.agents?.length || 1,
+        defaultId: status.agents?.defaultId || 'main',
+      },
+      heartbeat: {
+        enabled: status.heartbeat?.agents?.[0]?.enabled || false,
+        interval: status.heartbeat?.agents?.[0]?.every || '30m',
+      },
+      os: {
+        platform: status.os?.platform || 'linux',
+        arch: status.os?.arch || 'x64',
+        release: status.os?.release || '',
+      },
+      updatedAt: new Date().toISOString(),
     });
 
   } catch (err: any) {
     return Response.json({ 
-      running: false, 
       error: err.message 
     }, { status: 500 });
   }

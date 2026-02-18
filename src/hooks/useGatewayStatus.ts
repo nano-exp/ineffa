@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import type { StatusState, GatewayData, SessionData, AgentsData, HeartbeatData, OSData } from '@/lib/types';
+import type { StatusState } from '@/lib/types';
 
 const initialState: StatusState = {
   loaded: new Set(),
@@ -28,58 +28,32 @@ export function useGatewayStatus(autoFetch = true): UseGatewayStatusReturn {
 
   const fetchStatus = useCallback(async () => {
     setIsLoading(true);
-    setState(prev => ({
-      ...prev,
-      loaded: new Set(),
-      error: null,
-      updatedAt: null,
-    }));
+    setState(initialState);
 
     try {
       const response = await fetch('/api/status');
-      const reader = response.body?.getReader();
       
-      if (!reader) {
-        throw new Error('Failed to get stream reader');
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
 
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        
-        if (done) break;
-        
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          
-          try {
-            const chunk = JSON.parse(line);
-            
-            setState(prev => {
-              const newLoaded = new Set(prev.loaded);
-              newLoaded.add(chunk.type);
-              
-              return {
-                ...prev,
-                loaded: newLoaded,
-                [chunk.type === 'os' ? 'os' : 
-                  chunk.type === 'complete' ? prev : chunk.type]: 
-                  chunk.type === 'complete' ? prev : chunk.data,
-                ...(chunk.type === 'complete' && { updatedAt: new Date().toISOString() }),
-                ...(chunk.type === 'error' && { error: chunk.message }),
-              };
-            });
-          } catch (e) {
-            console.error('Failed to parse chunk:', line);
-          }
-        }
+      const data = await response.json() as Record<string, any>;
+      
+      if (data.error) {
+        throw new Error(data.error);
       }
+
+      setState({
+        loaded: new Set(['gateway', 'sessions', 'agents', 'heartbeat', 'os']),
+        gateway: data.gateway,
+        sessions: data.sessions,
+        channels: data.channels || null,
+        agents: data.agents,
+        heartbeat: data.heartbeat,
+        os: data.os,
+        error: null,
+        updatedAt: data.updatedAt,
+      });
     } catch (err) {
       setState(prev => ({
         ...prev,
