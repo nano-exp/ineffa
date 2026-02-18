@@ -2,43 +2,30 @@ import { execSync } from 'child_process';
 
 export async function GET() {
   try {
-    const output = execSync('openclaw status --json', { 
+    const output = execSync('openclaw status --json 2>/dev/null', { 
       encoding: 'utf-8', 
       timeout: 10000 
     });
     
-    // 找到 JSON 行
-    const lines = output.trim().split('\n');
-    let status = null;
+    // 找到 JSON 对象（从 { 开始，到 } 结束）
+    const jsonStart = output.indexOf('{');
+    if (jsonStart === -1) {
+      return Response.json({ error: 'No JSON found' }, { status: 500 });
+    }
     
-    for (const line of lines) {
-      try {
-        const parsed = JSON.parse(line);
-        if (parsed.sessions) {
-          status = parsed;
-          break;
-        }
-      } catch {
-        // 跳过非 JSON 行
-      }
-    }
-
-    if (!status) {
-      return Response.json({ error: '无法解析状态' }, { status: 500 });
-    }
+    const jsonText = output.slice(jsonStart);
+    const status = JSON.parse(jsonText);
 
     // 返回前端需要的数据结构
     return Response.json({
       gateway: {
-        running: status.gateway?.running ?? true,
-        mode: status.gateway?.bindMode || 'loopback',
-        url: status.gateway?.probeUrl || 'ws://127.0.0.1:18789',
-        reachable: status.rpc?.ok || false,
+        running: status.gatewayService?.runtimeShort?.includes('running') ?? false,
+        mode: status.gateway?.mode || 'local',
+        url: status.gateway?.url || 'ws://127.0.0.1:18789',
+        reachable: status.gateway?.reachable || false,
         service: {
-          installed: status.service?.loaded || false,
-          runtime: status.service?.runtime?.status === 'running' 
-            ? `running (pid: ${status.service.runtime.pid})`
-            : 'stopped',
+          installed: status.gatewayService?.installed || false,
+          runtime: status.gatewayService?.runtimeShort || 'unknown',
         },
       },
       sessions: {
