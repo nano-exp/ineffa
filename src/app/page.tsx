@@ -1,10 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import CalculatorSharp from '@ricons/ionicons5/es/CalculatorSharp';
-import SnowSharp from '@ricons/ionicons5/es/SnowSharp';
-import HappySharp from '@ricons/ionicons5/es/HappySharp';
-import FlashSharp from '@ricons/ionicons5/es/FlashSharp';
 import { useGatewayStatus } from '@/hooks/useGatewayStatus';
 
 export default function Home() {
@@ -13,7 +9,7 @@ export default function Home() {
   const isOnline = state.gateway?.running ?? false;
 
   return (
-    <main className="min-h-screen paper-texture text-ink scanline overflow-x-hidden">
+    <main className="min-h-screen paper-texture text-ink overflow-x-hidden">
       <div className="h-2 bg-gradient-to-r from-rust via-warm-brown to-teal" />
 
       <header className="max-w-6xl mx-auto px-6 pt-12 pb-8">
@@ -62,6 +58,12 @@ export default function Home() {
                 <p className="text-xs text-warm-brown uppercase tracking-wider mb-1">Protocol</p>
                 <p className="text-rust font-mono text-sm">清扫待机中</p>
               </div>
+
+              {/* 资源索引 */}
+              <Link href="/resources" className="vintage-border p-4 bg-cream/50 hover:bg-cream transition-colors cursor-pointer block">
+                <p className="text-xs text-warm-brown uppercase tracking-wider mb-1">Archive</p>
+                <p className="text-teal font-mono text-sm">资源索引</p>
+              </Link>
             </div>
           </div>
 
@@ -90,71 +92,6 @@ export default function Home() {
                 <p className="text-xs font-bold tracking-wider">NEW!</p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-cream-dark/50 py-16">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <span className="text-xs tracking-[0.5em] text-warm-brown uppercase">Specifications</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-ink mt-2">核心功能模块</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              {
-                num: '01',
-                title: '数据化思维',
-                desc: '系统内置「野猪单位」计量标准，一切家务劳动可量化评估。',
-                Icon: CalculatorSharp,
-                color: 'rust'
-              },
-              {
-                num: '02',
-                title: '冷笑话大师',
-                desc: '谐音梗技能满级，随时随地触发冷场效果， guaranteed awkward.',
-                Icon: SnowSharp,
-                color: 'teal'
-              },
-              {
-                num: '03',
-                title: '无口直球',
-                desc: '面部无表情模块 + 语音超活泼引擎，硬核萌力全开。',
-                Icon: HappySharp,
-                color: 'warm-brown'
-              },
-              {
-                num: '04',
-                title: '家政协议',
-                desc: '"从里到外洗干净...从脑子开始" — 全方位清扫服务。',
-                Icon: FlashSharp,
-                color: 'rust'
-              },
-            ].map((item, i) => (
-              <div key={i} className="vintage-border bg-cream/80 p-6 group hover:bg-cream transition-all duration-300">
-                <div className="flex gap-6">
-                  <div className={`text-4xl font-black opacity-20 group-hover:opacity-40 transition-opacity ${
-                    item.color === 'rust' ? 'text-rust' :
-                    item.color === 'teal' ? 'text-teal' : 'text-warm-brown'
-                  }`}>
-                    {item.num}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="w-6 h-6 flex items-center justify-center text-warm-brown">
-                        <item.Icon style={{ width: '100%', height: '100%' }} />
-                      </span>
-                      <h3 className={`text-xl font-bold ${
-                        item.color === 'rust' ? 'text-rust' :
-                        item.color === 'teal' ? 'text-teal' : 'text-warm-brown'
-                      }`}>{item.title}</h3>
-                    </div>
-                    <p className="text-ink/70 leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
