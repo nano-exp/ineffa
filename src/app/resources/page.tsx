@@ -36,7 +36,7 @@ export default function ResourcesPage() {
       <h1 className="font-['Noto_Serif_SC',serif] text-3xl font-medium mb-10 text-[#1a1a1a]">
         资源索引
       </h1>
-      <div className="flex flex-col gap-5 w-full max-w-md">
+      <div className="flex flex-col gap-5 w-full max-w-2xl">
         {links.map((link) => (
           <Link
             key={link.href}
